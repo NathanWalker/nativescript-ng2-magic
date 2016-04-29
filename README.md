@@ -6,7 +6,7 @@
 
 Magically drop a [NativeScript](https://www.nativescript.org/) app into your existing [Angular2](https://angular.io/) web application and reuse all your code.*
 
-* *You will be adding NativeScript views, but you alread knew that.*
+* *You will be adding NativeScript views, but you already knew that.*
 
 ## Install
 
