@@ -9,7 +9,7 @@ Magically integrate your [Angular2](https://angular.io/) web app with [NativeScr
 ## Install
 
 ```
-sudo npm i nativescript-ng2-magic --save
+sudo npm i nativescript-ng2-magic
 ```
 
 *Note: May require a password. 1 global npm package is installed.*

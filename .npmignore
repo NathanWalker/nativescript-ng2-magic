@@ -41,8 +41,10 @@ Thumbs.db
 .DS_Store
 *.yml
 *.ts
+*.js.map
 !*.d.ts
 src/client
+src/client/components
 !src/client/plugin
 src/public
 src/bootstrap.ts
