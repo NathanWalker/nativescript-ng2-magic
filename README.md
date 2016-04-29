@@ -58,7 +58,7 @@ nativeScriptBootstrap(AppComponent)
 
 ### npm script 
 
-Your `prepareapp` script should simply copy your web app src to the `nativescript/app` folder. [Why?](#why-copy-web-src)
+Your `prepareapp` script should simply copy your web app src to the `nativescript/app` folder. [Why?](#why-copy-the-web-src)
 
 The web app src available in this repo provides a directory structure that works well for this. [This seed project](https://github.com/NathanWalker/angular2-webpack-seed) also provides a good working directory structure that is much like the one found here.
 Example `scripts` from `package.json`:
