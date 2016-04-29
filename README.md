@@ -60,7 +60,7 @@ nativeScriptBootstrap(AppComponent)
 
 Your `prepareapp` script should simply copy your web app src to the `nativescript/app` folder. [Why?](#why-copy-web-src)
 
-The web app src available in this repo provides a directory structure that works well for this.
+The web app src available in this repo provides a directory structure that works well for this. [This seed project](https://github.com/NathanWalker/angular2-webpack-seed) also provides a good working directory structure that is much like the one found here.
 Example `scripts` from `package.json`:
 
 ```
@@ -81,7 +81,17 @@ You will need to have fully completed steps 1-5 above.
 npm run prepareapp
 ```
 
-Now open `nativescript/app/main.ts` and set it up to import your main/root component. You can safely delete `nativescript/app/app.component.ts` since that was just a sample.
+Now open `nativescript/app/main.ts` and set it up to import your main/root component. Once modified, it should look a little something like this:
+
+```
+// this import should be first in order to load some required settings (like globals and reflect-metadata)
+import {nativeScriptBootstrap} from "nativescript-angular/application";
+import {AppComponent} from "./client/components/app.component";
+
+nativeScriptBootstrap(AppComponent);
+```
+
+You can safely delete `nativescript/app/app.component.ts` since that was just a sample.
 
 ```
 npm run start.ios  // or npm run start.android
@@ -99,7 +109,7 @@ Your project can take the next steps to create customized builds using webpack, 
 `Component` from `nativescript-ng2-magic` is identical to `Component` from `angular2/core`, except it automatically uses NativeScript views when your app runs in a NativeScript mobile app.
 
 The library provides a custom `Decorator` under the hood.
-Feel free to [check it out here]().
+Feel free to [check it out here](https://github.com/NathanWalker/nativescript-ng2-magic/blob/master/src/client/plugin/decorators/magic.component.ts) and it uses a [utility here](https://github.com/NathanWalker/nativescript-ng2-magic/blob/master/src/client/plugin/decorators/utils.ts).
 
 You can see more elaborate use cases of this magic with [angular2-seed-advanced](https://github.com/NathanWalker/angular2-seed-advanced).
 
