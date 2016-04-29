@@ -57,6 +57,7 @@ __build__/**
 *.js
 *.js.map
 *.d.ts
+!fix-tsconfig.js
 !*.e2e.js
 !make.js
 !karma*.js

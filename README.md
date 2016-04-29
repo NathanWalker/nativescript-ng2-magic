@@ -4,7 +4,9 @@
 
 ![nativescript-ng2-magic](https://cdn.filestackcontent.com/XXMT4f8S8OGngNsJj0pr?v=0)
 
-Magically integrate your [Angular2](https://angular.io/) web app with [NativeScript](https://www.nativescript.org/).
+Magically drop a [NativeScript](https://www.nativescript.org/) app into your existing [Angular2](https://angular.io/) web application and reuse all your code.*
+
+* *You will be adding NativeScript views, but you alread knew that.*
 
 ## Install
 
