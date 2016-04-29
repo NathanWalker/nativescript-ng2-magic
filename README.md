@@ -29,7 +29,9 @@ sudo npm i nativescript-ng2-magic
 
 ```
 import {Component, MagicService} from 'nativescript-ng2-magic';
-MagicService.NATIVESCRIPT_VIEW_PATH = './client/nativescript'; // can be any directory in your project
+// can be any directory **relative** to your web src root
+// in this repo, the web src root is `src/`
+MagicService.NATIVESCRIPT_VIEW_PATH = './client/nativescript'; 
 
 @Component({
   selector: 'app',
