@@ -6,9 +6,14 @@
 		}
 	},
 	"dependencies": {
-		"angular2": "2.0.0-beta.16",
-		"nativescript-angular": "0.0.46",
-		"tns-core-modules": "^2.0.0 || 2.0.0-angular-6"
+		"angular2": "2.0.0-beta.14",
+    "es6-shim": "^0.35.0",
+		"nativescript-angular": "0.0.41",
+    "nativescript-ng2-magic": "1.1.0",
+    "reflect-metadata": "0.1.2",
+		"rxjs": "5.0.0-beta.2",
+		"tns-core-modules": "^2.0.0 || 2.0.0-angular-4",
+    "zone.js": "^0.6.6"
 	},
 	"devDependencies": {
 		"nativescript-dev-typescript": "^0.3.2",

@@ -11,10 +11,8 @@ Magically drop a [NativeScript](https://www.nativescript.org/) app into your exi
 ## Install
 
 ```
-sudo npm i nativescript-ng2-magic
+npm i nativescript-ng2-magic
 ```
-
-*Note: May require a password. 1 global npm package is installed.*
 
 ## Usage
 

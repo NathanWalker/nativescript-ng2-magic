@@ -1,7 +1,10 @@
+import {ROUTER_DIRECTIVES} from 'angular2/router';
+
 declare var NSObject, NSString, android, java;
 
 export class MagicService {
   public static NATIVESCRIPT_VIEW_PATH: string;
+  public static ROUTER_DIRECTIVES: any = ROUTER_DIRECTIVES;
 
   public static TEMPLATE_URL(path: string): string {
     if (MagicService.IS_NATIVESCRIPT()) {

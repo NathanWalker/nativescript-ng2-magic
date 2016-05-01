@@ -1,6 +1,6 @@
 {
   "name": "nativescript-ng2-magic",
-  "version": "1.0.1",
+  "version": "1.1.3",
   "description": "Magically integrate your Angular2 web app with NativeScript.",
   "main": "nativescript-ng2-magic.js",
   "typings": "./nativescript-ng2-magic.d.ts",
