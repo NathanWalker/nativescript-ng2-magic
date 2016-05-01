@@ -1,18 +1,16 @@
 {
-  "compilerOptions": {
-    "target": "ES5",
-    "module": "commonjs",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "sourceMap": true,
-    "moduleResolution": "node"
-  },
-  "files": [
-    "typings/browser.d.ts",
-    "nativescript-ng2-magic.ts",
-    "src/bootstrap.ts",
-    "src/vendor.ts"
-  ],
-  "compileOnSave": false,
-  "buildOnSave": false
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES5",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "declaration": true,
+        "moduleResolution": "node"
+    },
+    "files": [
+        "typings/main.d.ts",
+        "nativescript-ng2-magic.ts"
+    ]
 }

@@ -47,7 +47,7 @@ var fixPackage = function () {
       '    "angular2": "2.0.0-beta.16",\n' +
       '    "es6-shim": "^0.35.0",\n' +
       '    "nativescript-angular": "0.0.46",\n' +
-      '    "nativescript-ng2-magic-app": "1.1.3",\n' +
+      '    "nativescript-ng2-magic": "1.1.4",\n' +
       '    "reflect-metadata": "0.1.2",\n' +
       '    "rxjs": "5.0.0-beta.2",\n' +
       '    "tns-core-modules": "^2.0.0 || 2.0.0-angular-4",\n' +
@@ -80,7 +80,9 @@ var fixMain = function () {
 
     var fix = '// this import should be first in order to load some required settings (like globals and reflect-metadata)\n' +
       'import {nativeScriptBootstrap} from "nativescript-angular/application";\n' +
-      'import {NS_ROUTER_PROVIDERS} from "nativescript-angular/router";\n' +
+      'import {NS_ROUTER_PROVIDERS, NS_ROUTER_DIRECTIVES} from "nativescript-angular/router";\n' +
+      'import {MagicService} from "nativescript-ng2-magic";\n' +
+      'MagicService.ROUTER_DIRECTIVES = NS_ROUTER_DIRECTIVES;\n' +
       '\n' +
       '// import your root component here\n' +
       'import {AppComponent} from "./client/components/app.component";\n' +
