@@ -215,7 +215,10 @@ function fixTsConfig() {
  * Fix the NativeScript Package file
  */
 function fixNativeScriptPackage() {
-    var packageJSON={}, packageFile = '../../package.json';
+    var packageJSON = {}, packageFile = '../../package.json';
+    packageJSON.name = "NativeScriptApp";
+    packageJSON.version = "0.0.0";
+  
     var AngularJSON = {};
     if (fs.existsSync(packageFile)) {
         packageJSON = require(packageFile);
@@ -263,8 +266,6 @@ function fixNativeScriptPackage() {
     packageJSON.devDependencies.lazy = "1.0.11";
     packageJSON.devDependencies["nativescript-dev-typescript"] = "^0.3.2";
     packageJSON.devDependencies.typescript = "^1.8.10";
-
-    packageJSON.version = "0.0.0";
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJSON, null, 4), 'utf8');
 }
@@ -318,16 +319,15 @@ function fixMainFile (component) {
  */
 function displayFinalHelp()
 {
-    console.log("");
-    console.log("------------------------------------------------------------------------------");
-    console.log("You may need to configure your root component for your NativeScript App.");
-    console.log("Follow this guide https://github.com/NathanWalker/nativescript-ng2-magic#usage");
+    console.log("-------------- Welcome to the Magical World of NativeScript -------------------");
+    console.log("To finish, follow this guide https://github.com/NathanWalker/nativescript-ng2-magic#usage");
+    console.log("After you have completed the steps in the usage guide, you can then:");
     console.log("");
     console.log("Run your app in the iOS Simulator with:");
     console.log("  npm run start.ios");
     console.log("");
     console.log("Run your app in an Android emulator with:");
     console.log("  npm run start.android");
-    console.log("------------------------------------------------------------------------------s");
+    console.log("-------------------------------------------------------------------------------");
     console.log("");
 }

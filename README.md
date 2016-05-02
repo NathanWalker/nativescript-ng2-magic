@@ -24,7 +24,7 @@ npm i nativescript-ng2-magic
 1. Use `Component` from `nativescript-ng2-magic` instead of `angular2/core`. [Why?](#why-different-component)
 2. Use `templateUrl` with your components and use absolute paths. [Why?](#why-absolute-paths)
 3. Point `MagicService.NATIVESCRIPT_VIEW_PATH` at a specific directory for your NativeScript views.
-4. Create NativeScript views for each of your component's templates in that ^ directory. [Learn more](http://angularjs.blogspot.com/2016/03/code-reuse-in-angular-2-native-mobile.html?m=1)
+4. Create NativeScript views for each of your component's templates in that ^ directory. [How?](#how-to-create-nativescript-views)
 5. [Run your truly *native* mobile app with NativeScript!](#run-for-first-time)
 
 ## Example
@@ -87,6 +87,28 @@ npm run start.android
 ```
 
 Welcome to the wonderfully magical world of NativeScript!
+
+## How to create NativeScript views
+
+Based on our example above, assume `./client/components/app.component.html` looks like this:
+
+```
+<div>This is my root component</div>
+```
+
+You would then create a new file in `./client/nativescript/client/components/app.component.html` like this:
+
+```
+<Label text="This is my root component"></Label>
+```
+
+Notice how the `templateUrl` is expanded to match underneath `./client/nativescript` which is the path we chose to configure `MagicService.NATIVESCRIPT_VIEW_PATH`. 
+
+You can [learn more about NativeScript view options here](https://docs.nativescript.org/ui/ui-views).
+
+You can also install helpful view snippets for [VS Code here](https://marketplace.visualstudio.com/items?itemName=wwwalkerrun.nativescript-ng2-snippets) or [Atom Editor here](https://atom.io/packages/nativescript-ng2-atom-snippets).
+
+You can [learn more here](http://angularjs.blogspot.com/2016/03/code-reuse-in-angular-2-native-mobile.html?m=1) about how this setup works and why.
 
 ## Supported Seeds
 
