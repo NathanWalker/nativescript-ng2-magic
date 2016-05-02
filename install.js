@@ -32,7 +32,7 @@ if (!hasNativeScript && !isRanFromNativeScript) {
     cp.execSync('npm install image-to-ascii-cli', {cwd: '../..'});
 
     console.log("Configuring...");
-    cp.execSync('tns plugin add ../node_modules/nativescript-ng2-magic', {cwd: '../../nativescript'});
+    cp.execSync('tns plugin add nativescript-ng2-magic', {cwd: '../../nativescript'});
 
     // We need to create a symlink
     try {
