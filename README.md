@@ -93,13 +93,17 @@ Welcome to the wonderfully magical world of NativeScript!
 Based on our example above, assume `./client/components/app.component.html` looks like this:
 
 ```
-<div>This is my root component</div>
+<main>
+  <div>This is my root component</div>
+</main>
 ```
 
 You would then create a new file in `./client/nativescript/client/components/app.component.html` like this:
 
 ```
-<Label text="This is my root component"></Label>
+<StackLayout>
+  <Label text="This is my root component"></Label>
+</StackLayout>
 ```
 
 Notice how the `templateUrl` is expanded to match underneath `./client/nativescript` which is the path we chose to configure `MagicService.NATIVESCRIPT_VIEW_PATH`. 
