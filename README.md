@@ -6,7 +6,7 @@
 
 Magically drop a [NativeScript](https://www.nativescript.org/) app into your existing [Angular2](https://angular.io/) web application and reuse all your code.*
 
-* *You will be adding NativeScript views, but you already knew that.*
+*You will be adding NativeScript views, but you already knew that.*
 
 * [Install](#install)
 * [Usage](#usage)
@@ -46,7 +46,7 @@ export class AppComponent {}
 
 #### What if using the router?
 
-If your app is using the router, you will want to use the `ROUTER_DIRECTIVES` from `nativescript-ng2-magic`. Here's an example of the root component above using routing:
+If your app is using the router, you will want to use the `MagicService.ROUTER_DIRECTIVES` from `nativescript-ng2-magic`. Here's an example of the root component above using routing:
 
 ```
 import {Component, MagicService} from 'nativescript-ng2-magic';
@@ -91,11 +91,6 @@ Welcome to the wonderfully magical world of NativeScript!
 ## Supported Seeds
 
 * [angular2-webpack-seed](https://github.com/NathanWalker/angular2-webpack-seed)
-
-#### Why copy the web src?
-
-This is the quickest way to get your web app running in a NativeScript application.
-Your project can take the next steps to create customized builds using webpack, grunt, or gulp to further evolve your project needs and development workflows to relieve the need of copying the web src as needed.
 
 ### Why different Component?
 
