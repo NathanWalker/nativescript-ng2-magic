@@ -18,6 +18,13 @@ if (process.argv.length > 2) {
 
 var isRanFromNativeScript = fs.existsSync("../../app/App_Resources");
 var hasNativeScript = fs.existsSync("../../nativescript");
+var clientSrc = "../../src/client"; // default
+var rootSymLinkClient = "/../../../src/client/"; // default
+var nativescriptClientSrc = "../../nativescript/app/client"; // default
+var rootSymLinkNativeScript = "/../../app/client"; // default
+
+// Various seed project support
+var seedAngularOfficial = "../../src/app";
 
 if (!hasNativeScript && !isRanFromNativeScript) {
     console.log("Installing NativeScript Angular 2 Template...");
@@ -41,6 +48,18 @@ if (!hasNativeScript && !isRanFromNativeScript) {
         cp.execSync('rm -rf app/app.component.ts', { cwd: '../../nativescript' });
     }
 
+    // Various seed project support
+    if (!fs.existsSync(clientSrc)) {
+      console.log('Configuring custom seed project...');
+      // Different seeds
+      if (fs.existsSync(seedAngularOfficial)) {
+        clientSrc = seedAngularOfficial;
+        rootSymLinkClient = "/../../../src/app/";
+        nativescriptClientSrc = "../../nativescript/app/app";
+        rootSymLinkNativeScript = "/../../app/app";
+      }
+    }
+
     // We need to create a symlink
     try {
         createSymLink();
@@ -49,8 +68,9 @@ if (!hasNativeScript && !isRanFromNativeScript) {
         // Failed, which means they weren't running root; so lets try to get root
         AttemptRootSymlink();
     }
+
     // Might silent fail on OSX, so we have to see if it exists
-    if (!fs.existsSync('../../nativescript/app/client')) {
+    if (!fs.existsSync(nativescriptClientSrc)) {
         AttemptRootSymlink();
     }
 
@@ -86,7 +106,7 @@ return 0;
  * @returns {string}
  */
 function figureOutRootComponent() {
-    var rootComponents = ['../../../src/bootstrap.ts', '../../../boot.ts'];
+    var rootComponents = ['../../../src/bootstrap.ts', '../../../src/app.ts', '../../../boot.ts'];
     for (var i=0;i<rootComponents.length; i++) {
         if (fs.existsSync(rootComponents[i])) {
             var result = processBootStrap(rootComponents[i]);
@@ -131,7 +151,7 @@ function AttemptRootSymlink() {
         cp.execSync("powershell -Command \"Start-Process 'node' -ArgumentList '"+curPath+"/install.js symlink' -verb runas\"");
     } else if (process.platform === 'darwin') {
         var sudoFn = require('sudo-fn');
-        sudoFn({module: 'fs', function: 'symlinkSync', params: [path.resolve('../../src/client/'),path.resolve('../../nativescript/app/client')],type: 'node-callback'},function () {
+        sudoFn({module: 'fs', function: 'symlinkSync', params: [path.resolve(clientSrc),path.resolve(nativescriptClientSrc)],type: 'node-callback'},function () {
             console.log("Symlink Created");
         });
     }
@@ -144,8 +164,8 @@ function createRootSymLink() {
     var li1 = process.argv[1].lastIndexOf('\\'), li2 = process.argv[1].lastIndexOf('/');
     if (li2 > li1) { li1 = li2; }
     var AppPath = process.argv[1].substring(0,li1);
-    var p1 = path.resolve(AppPath+'/../../app/client');
-    var p2 = path.resolve(AppPath+'/../../../src/client/');
+    var p1 = path.resolve(AppPath + rootSymLinkNativeScript);
+    var p2 = path.resolve(AppPath + rootSymLinkClient);
     fs.symlinkSync(p2,p1,'junction');
 }
 
@@ -153,7 +173,7 @@ function createRootSymLink() {
  * Create Symlink
  */
 function createSymLink() {
-    fs.symlinkSync(path.resolve('../../src/client/'),path.resolve('../../nativescript/app/client'),'junction');
+    fs.symlinkSync(path.resolve(clientSrc + '/'),path.resolve(nativescriptClientSrc),'junction');
 }
 
 /**
@@ -210,19 +230,19 @@ function fixNativeScriptPackage() {
         AngularJSON.peerDependencies = {
             "es6-shim": "^0.35.0",
             "reflect-metadata": "0.1.2",
-            "rxjs": "5.0.0-beta.2",
+            "rxjs": "5.0.0-beta.6",
             "zone.js": "^0.6.12"
         };
     }
 
     // Setup the TNS Version
-    var version = packageJSON.dependencies['tns-core-modules'];
-    if (version[0] === '^') { version = version.substring(1); }
-    if (version.indexOf(' ') !== -1) {
-        version = version.substring(0, version.indexOf(' '));
-    }
-    packageJSON.nativescript['tns-ios'] = {version: version};
-    packageJSON.nativescript['tns-android'] = {version: version};
+    // var version = packageJSON.dependencies['tns-core-modules'];
+    // if (version[0] === '^') { version = version.substring(1); }
+    // if (version.indexOf(' ') !== -1) {
+    //     version = version.substring(0, version.indexOf(' '));
+    // }
+    packageJSON.nativescript['tns-ios'] = { version: "2.0.0" };//version};
+    packageJSON.nativescript['tns-android'] = {version: "2.0.0" };//version};
 
     // Copy over all the Peer Dependencies
     for (var key in AngularJSON.peerDependencies) {
@@ -243,6 +263,8 @@ function fixNativeScriptPackage() {
     packageJSON.devDependencies.lazy = "1.0.11";
     packageJSON.devDependencies["nativescript-dev-typescript"] = "^0.3.2";
     packageJSON.devDependencies.typescript = "^1.8.10";
+
+    packageJSON.version = "0.0.0";
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJSON, null, 4), 'utf8');
 }
