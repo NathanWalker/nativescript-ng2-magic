@@ -18,6 +18,13 @@ if (process.argv.length > 2) {
 
 var isRanFromNativeScript = fs.existsSync("../../app/App_Resources");
 var hasNativeScript = fs.existsSync("../../nativescript");
+var clientSrc = "../../src/client"; // default
+var rootSymLinkClient = "/../../../src/client/"; // default
+var nativescriptClientSrc = "../../nativescript/app/client"; // default
+var rootSymLinkNativeScript = "/../../app/client"; // default
+
+// Various seed project support
+var seedAngularOfficial = "../../src/app";
 
 if (!hasNativeScript && !isRanFromNativeScript) {
     console.log("Installing NativeScript Angular 2 Template...");
@@ -32,7 +39,18 @@ if (!hasNativeScript && !isRanFromNativeScript) {
     cp.execSync('npm install image-to-ascii-cli', {cwd: '../..'});
 
     console.log("Configuring...");
-    cp.execSync('tns plugin add nativescript-ng2-magic', {cwd: '../../nativescript'});
+    cp.execSync('tns plugin add nativescript-ng2-magic', { cwd: '../../nativescript' });
+
+    // Various seed project support
+    if (!fs.existsSync(clientSrc)) {
+      // Different seeds
+      if (fs.existsSync(seedAngularOfficial)) {
+        clientSrc = seedAngularOfficial;
+        rootSymLinkClient = "/../../../src/app/";
+        nativescriptClientSrc = "../../nativescript/app/app";
+        rootSymLinkNativeScript = "/../../app/app";
+      }
+    }
 
     // We need to create a symlink
     try {
@@ -42,8 +60,9 @@ if (!hasNativeScript && !isRanFromNativeScript) {
         // Failed, which means they weren't running root; so lets try to get root
         AttemptRootSymlink();
     }
+
     // Might silent fail on OSX, so we have to see if it exists
-    if (!fs.existsSync('../../nativescript/app/client')) {
+    if (!fs.existsSync(nativescriptClientSrc)) {
         AttemptRootSymlink();
     }
 
@@ -79,7 +98,7 @@ return 0;
  * @returns {string}
  */
 function figureOutRootComponent() {
-    var rootComponents = ['../../../src/bootstrap.ts', '../../../boot.ts'];
+    var rootComponents = ['../../../src/bootstrap.ts', '../../../src/app.ts', '../../../boot.ts'];
     for (var i=0;i<rootComponents.length; i++) {
         if (fs.existsSync(rootComponents[i])) {
             var result = processBootStrap(rootComponents[i]);
@@ -124,7 +143,7 @@ function AttemptRootSymlink() {
         cp.execSync("powershell -Command \"Start-Process 'node' -ArgumentList '"+curPath+"/install.js symlink' -verb runas\"");
     } else if (process.platform === 'darwin') {
         var sudoFn = require('sudo-fn');
-        sudoFn({module: 'fs', function: 'symlinkSync', params: [path.resolve('../../src/client/'),path.resolve('../../nativescript/app/client')],type: 'node-callback'},function () {
+        sudoFn({module: 'fs', function: 'symlinkSync', params: [path.resolve(clientSrc + '/'),path.resolve(nativescriptClientSrc)],type: 'node-callback'},function () {
             console.log("Symlink Created");
         });
     }
@@ -137,8 +156,8 @@ function createRootSymLink() {
     var li1 = process.argv[1].lastIndexOf('\\'), li2 = process.argv[1].lastIndexOf('/');
     if (li2 > li1) { li1 = li2; }
     var AppPath = process.argv[1].substring(0,li1);
-    var p1 = path.resolve(AppPath+'/../../app/client');
-    var p2 = path.resolve(AppPath+'/../../../src/client/');
+    var p1 = path.resolve(AppPath + rootSymLinkNativeScript);
+    var p2 = path.resolve(AppPath + rootSymLinkClient);
     fs.symlinkSync(p2,p1,'junction');
 }
 
@@ -146,7 +165,7 @@ function createRootSymLink() {
  * Create Symlink
  */
 function createSymLink() {
-    fs.symlinkSync(path.resolve('../../src/client/'),path.resolve('../../nativescript/app/client'),'junction');
+    fs.symlinkSync(path.resolve(clientSrc + '/'),path.resolve(nativescriptClientSrc),'junction');
 }
 
 /**
@@ -163,7 +182,8 @@ function fixTsConfig() {
             target: 'es5',
             sourceMap:true,
             experimentalDecorators: true,
-            emitDecoratorMetadata: true};
+            emitDecoratorMetadata: true
+        };
     }
 
     // See: https://github.com/NativeScript/nativescript-angular/issues/205
@@ -254,13 +274,9 @@ function fixAngularPackage() {
     if (!packageJSON.scripts) {
         packageJSON.scripts = {};
     }
-    if (process.platform === "win32") {
-        packageJSON.scripts["start.ios"] = "cd nativescript && tns emulator ios && cd ..";
-        packageJSON.scripts["start.android"] = "cd nativescript && tns emulator android && cd ..";
-    } else {
-        packageJSON.scripts["start.ios"] = "cd nativescript; tns emulator ios; cd ..";
-        packageJSON.scripts["start.android"] = "cd nativescript; tns emulator android; cd ..";
-    }
+
+    packageJSON.scripts["start.ios"] = "cd nativescript && tns emulate ios && cd ..";
+    packageJSON.scripts["start.android"] = "cd nativescript && tns emulate android && cd ..";
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJSON, null, 4), 'utf8');
 }

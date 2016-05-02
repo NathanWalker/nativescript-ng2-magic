@@ -8,6 +8,11 @@ Magically drop a [NativeScript](https://www.nativescript.org/) app into your exi
 
 * *You will be adding NativeScript views, but you already knew that.*
 
+* [Install](#install)
+* [Usage](#usage)
+* [Example](#example)
+* [Supported seeds](#supported-seeds)
+
 ## Install
 
 ```
@@ -20,12 +25,11 @@ npm i nativescript-ng2-magic
 2. Use `templateUrl` with your components and use absolute paths. [Why?](#why-absolute-paths)
 3. Point `MagicService.NATIVESCRIPT_VIEW_PATH` at a specific directory for your NativeScript views.
 4. Create NativeScript views for each of your component's templates in that ^ directory. [Learn more](http://angularjs.blogspot.com/2016/03/code-reuse-in-angular-2-native-mobile.html?m=1)
-5. Add npm script to run your NativeScript app. [View example here](#npm-script)
-6. [Run your truly *native* mobile app with NativeScript!](#run-for-first-time)
+5. [Run your truly *native* mobile app with NativeScript!](#run-for-first-time)
 
-### Example
+## Example
 
-**app.component.ts**:
+A sample root component, **app.component.ts**:
 
 ```
 import {Component, MagicService} from 'nativescript-ng2-magic';
@@ -40,66 +44,53 @@ MagicService.NATIVESCRIPT_VIEW_PATH = './client/nativescript';
 export class AppComponent {}
 ```
 
-**Web Bootstrap**:
+#### What if using the router?
+
+If your app is using the router, you will want to use the `ROUTER_DIRECTIVES` from `nativescript-ng2-magic`. Here's an example of the root component above using routing:
 
 ```
-import {bootstrap} from 'angular2/platform/browser';
-import {AppComponent} from './client/components/app.component';
+import {Component, MagicService} from 'nativescript-ng2-magic';
+import {RouteConfig} from 'angular2/router';
+// can be any directory **relative** to your web src root
+// in this repo, the web src root is `src/`
+MagicService.NATIVESCRIPT_VIEW_PATH = './client/nativescript'; 
 
-bootstrap(AppComponent);
-```
+import {HomeComponent} from './components/home';
+import {AboutComponent} from './components/about';
 
-**NativeScript Bootstrap**:
-
-```
-import {nativeScriptBootstrap} from 'nativescript-angular/application';
-import {AppComponent} from './client/components/app.component';
-
-nativeScriptBootstrap(AppComponent)
-```
-
-### npm script 
-
-Your `prepareapp` script should simply copy your web app src to the `nativescript/app` folder. [Why?](#why-copy-the-web-src)
-
-The web app src available in this repo provides a directory structure that works well for this. [This seed project](https://github.com/NathanWalker/angular2-webpack-seed) also provides a good working directory structure that is much like the one found here.
-Example `scripts` from `package.json`:
-
-```
-...
-  "scripts": {
-    "prepareapp": "cp -R src/client nativescript/app/",
-    "start.ios": "npm run prepareapp && cd nativescript && tns emulate ios",
-    "start.android": "npm run prepareapp && cd nativescript && tns emulate android"
-  }
-...
+@Component({
+  selector: 'app',
+  templateUrl: './client/components/app.component.html',
+  directives: [MagicService.ROUTER_DIRECTIVES]
+})
+@RouteConfig([
+  { path: '/home',       component: HomeComponent,        name: 'Home', useAsDefault: true },
+  { path: '/about',      component: AboutComponent,       name: 'About' }
+])
+export class AppComponent {}
 ```
 
 ### Run for first time!
 
-You will need to have fully completed steps 1-5 above.
+You will need to have fully completed steps 1-4 above.
+
+Run your app in the iOS Simulator with:
 
 ```
-npm run prepareapp
+npm run start.ios
 ```
 
-Now open `nativescript/app/main.ts` and set it up to import your main/root component. Once modified, it should look a little something like this:
+Run your app in an Android emulator with:
 
 ```
-// this import should be first in order to load some required settings (like globals and reflect-metadata)
-import {nativeScriptBootstrap} from "nativescript-angular/application";
-import {AppComponent} from "./client/components/app.component";
-
-nativeScriptBootstrap(AppComponent);
-```
-
-You can safely delete `nativescript/app/app.component.ts` since that was just a sample.
-
-```
-npm run start.ios  // or npm run start.android
+npm run start.android
 ```
 
 Welcome to the wonderfully magical world of NativeScript!
+
+## Supported Seeds
+
+* [angular2-webpack-seed](https://github.com/NathanWalker/angular2-webpack-seed)
 
 #### Why copy the web src?
 
