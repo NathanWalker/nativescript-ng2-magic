@@ -41,6 +41,13 @@ if (!hasNativeScript && !isRanFromNativeScript) {
     console.log("Configuring...");
     cp.execSync('tns plugin add nativescript-ng2-magic', { cwd: '../../nativescript' });
 
+    // remove sample component
+    if (process.platform === 'win32') {
+        cp.execSync('DEL app/app.component.ts', { cwd: '../../nativescript' });
+    } else if (process.platform === 'darwin') {
+        cp.execSync('rm -rf app/app.component.ts', { cwd: '../../nativescript' });
+    }
+
     // Various seed project support
     if (!fs.existsSync(clientSrc)) {
       // Different seeds
@@ -142,7 +149,9 @@ function AttemptRootSymlink() {
         var curPath = path.resolve("../../nativescript/node_modules/nativescript-ng2-magic");
         cp.execSync("powershell -Command \"Start-Process 'node' -ArgumentList '"+curPath+"/install.js symlink' -verb runas\"");
     } else if (process.platform === 'darwin') {
-        var sudoFn = require('sudo-fn');
+      var sudoFn = require('sudo-fn');
+      console.log('AttemptRootSymlink');
+      console.log(nativescriptClientSrc);
         sudoFn({module: 'fs', function: 'symlinkSync', params: [path.resolve(clientSrc + '/'),path.resolve(nativescriptClientSrc)],type: 'node-callback'},function () {
             console.log("Symlink Created");
         });
@@ -275,8 +284,8 @@ function fixAngularPackage() {
         packageJSON.scripts = {};
     }
 
-    packageJSON.scripts["start.ios"] = "cd nativescript && tns emulate ios && cd ..";
-    packageJSON.scripts["start.android"] = "cd nativescript && tns emulate android && cd ..";
+    packageJSON.scripts["start.ios"] = "cd nativescript && tns emulate ios";
+    packageJSON.scripts["start.android"] = "cd nativescript && tns emulate android";
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJSON, null, 4), 'utf8');
 }
