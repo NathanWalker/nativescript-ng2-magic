@@ -26,6 +26,7 @@ var rootSymLinkNativeScript = "/../../app/client"; // default
 // Various seed project support
 var seedAngularOfficial = "../../src/app";
 
+
 if (!hasNativeScript && !isRanFromNativeScript) {
     console.log("Installing NativeScript Angular 2 Template...");
     cp.execSync('tns create nativescript --template  https://github.com/NativeScript/template-hello-world-ng', {cwd: '../..'});
