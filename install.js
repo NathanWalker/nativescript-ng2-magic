@@ -1,11 +1,35 @@
 // -----------------------------------------------------------
-// version 1.05
+// version 1.06
 // -----------------------------------------------------------
 "use strict";
+
+var debugging = false;
 
 var fs = require('fs');
 var cp = require('child_process');
 var path = require('path');
+
+var isRanFromNativeScript = fs.existsSync("../../app/App_Resources");
+var hasNativeScript = fs.existsSync("../../nativescript");
+
+// Figure out angular Seed Path for symlink...
+var angularSeedPath = '../../src/';
+var seeds = ['client', 'app'];
+var seedId = 0;
+
+// Search for the actual seed, depending on where we are run from
+for (var i=0;i<seeds.length;i++) {
+    if (fs.existsSync(angularSeedPath+seeds[i])) {
+        seedId = i; break;
+    }
+}
+angularSeedPath += seeds[seedId] + "/";
+var nativescriptClientPath = '../../nativescript/app/' + seeds[seedId] + "/";
+
+if (debugging) {
+    console.log("Path is:", angularSeedPath, nativescriptClientPath);
+}
+
 
 // Root SymLink Code for Windows
 if (process.argv.length > 2) {
@@ -16,17 +40,6 @@ if (process.argv.length > 2) {
     return 0;
 }
 
-var isRanFromNativeScript = fs.existsSync("../../app/App_Resources");
-var hasNativeScript = fs.existsSync("../../nativescript");
-var clientSrc = "../../src/client"; // default
-var rootSymLinkClient = "/../../../src/client/"; // default
-var nativescriptClientSrc = "../../nativescript/app/client"; // default
-var rootSymLinkNativeScript = "/../../app/client"; // default
-
-// Various seed project support
-var seedAngularOfficial = "../../src/app";
-
-
 if (!hasNativeScript && !isRanFromNativeScript) {
     console.log("Installing NativeScript Angular 2 Template...");
     cp.execSync('tns create nativescript --template  https://github.com/NativeScript/template-hello-world-ng', {cwd: '../..'});
@@ -35,51 +48,53 @@ if (!hasNativeScript && !isRanFromNativeScript) {
 
     console.log("Installing support files");
     if (process.platform === 'darwin') {
-        cp.execSync('npm install sudo-fn', {cwd: '../..'});
+        try {
+            cp.execSync('npm install sudo-fn', {cwd: '../..'});
+            cp.execSync('npm install image-to-ascii-cli', {cwd: '../..'});
+        }
+        catch (Err) {
+            console.log("Sudo install Error", Err);
+        }
     }
-    cp.execSync('npm install image-to-ascii-cli', {cwd: '../..'});
 
     console.log("Configuring...");
-    cp.execSync('tns plugin add nativescript-ng2-magic', { cwd: '../../nativescript' });
+    if (debugging) {
+        cp.execSync('tns plugin add ../node_modules/nativescript-ng2-magic', {cwd: '../../nativescript'});
+    } else {
+        cp.execSync('tns plugin add nativescript-ng2-magic', {cwd: '../../nativescript'});
+    }
 
     // remove sample component
-    if (process.platform === 'win32') {
-        cp.execSync('DEL app/app.component.ts', { cwd: '../../nativescript' });
-    } else if (process.platform === 'darwin') {
-        cp.execSync('rm -rf app/app.component.ts', { cwd: '../../nativescript' });
+    if (fs.existsSync('../../nativescript/app/app.component.ts')) {
+        console.log("Removing sample component");
+        fs.unlinkSync('../../nativescript/app/app.component.ts');
     }
 
-    // Various seed project support
-    if (!fs.existsSync(clientSrc)) {
-      console.log('Configuring custom seed project...');
-      // Different seeds
-      if (fs.existsSync(seedAngularOfficial)) {
-        clientSrc = seedAngularOfficial;
-        rootSymLinkClient = "/../../../src/app/";
-        nativescriptClientSrc = "../../nativescript/app/app";
-        rootSymLinkNativeScript = "/../../app/app";
-      }
-    }
+
 
     // We need to create a symlink
     try {
         createSymLink();
     } catch (err) {
-        console.log(err);
+        if (debugging) {
+            console.log("Symlink error: ", err);
+        }
         // Failed, which means they weren't running root; so lets try to get root
         AttemptRootSymlink();
     }
 
     // Might silent fail on OSX, so we have to see if it exists
-    if (!fs.existsSync(nativescriptClientSrc)) {
+    if (!fs.existsSync(nativescriptClientPath)) {
         AttemptRootSymlink();
     }
 
-
-    // image to ascii used GM/ImageMagick which may not be installed, so if it isn't installed; don't print the error message
-    var ascii = cp.execSync('image-to-ascii -i https://cdn.filestackcontent.com/XXMT4f8S8OGngNsJj0pr', {cwd: '../image-to-ascii-cli/bin/'}).toString();
-    if (ascii.length > 30) {
-        console.log(ascii);
+    // This does not look good on windows; windows ansi support in node sucks...  So we aren't going to do this in windows
+    if (process.platform === "darwin") {
+        // image to ascii uses GM which may not be installed, so if it isn't installed; don't print the error message
+        var ascii = cp.execSync('image-to-ascii -i https://cdn.filestackcontent.com/XXMT4f8S8OGngNsJj0pr', {cwd: '../image-to-ascii-cli/bin/'}).toString();
+        if (ascii.length > 30) {
+            console.log(ascii);
+        }
     }
 
     displayFinalHelp();
@@ -135,6 +150,9 @@ function processBootStrap(file) {
     if (odx1 === -1) { return null; }
     var componentRef = data.substring(idx, odx1);
     var exp = "import\\s+\\{"+componentRef+"\\}\\s+from\\s+[\'|\"](\\S+)[\'|\"][;?]";
+    if (debugging) {
+        console.log("Searching for", exp);
+    }
     //noinspection JSPotentiallyInvalidConstructorUsage
     var r = RegExp(exp, 'i').exec(data);
     if (r === null || r.length <= 1) { return null; }
@@ -148,11 +166,14 @@ function processBootStrap(file) {
 function AttemptRootSymlink() {
 
     if (process.platform === 'win32') {
-        var curPath = path.resolve("../../nativescript/node_modules/nativescript-ng2-magic");
+        var curPath = path.resolve("./");
+        if (debugging) {
+            console.log("RootSymlink Base path is", curPath);
+        }
         cp.execSync("powershell -Command \"Start-Process 'node' -ArgumentList '"+curPath+"/install.js symlink' -verb runas\"");
     } else if (process.platform === 'darwin') {
         var sudoFn = require('sudo-fn');
-        sudoFn({module: 'fs', function: 'symlinkSync', params: [path.resolve(clientSrc),path.resolve(nativescriptClientSrc)],type: 'node-callback'},function () {
+        sudoFn({module: 'fs', function: 'symlinkSync', params: [path.resolve(angularSeedPath),path.resolve(nativescriptClientPath)],type: 'node-callback'},function () {
             console.log("Symlink Created");
         });
     }
@@ -165,8 +186,11 @@ function createRootSymLink() {
     var li1 = process.argv[1].lastIndexOf('\\'), li2 = process.argv[1].lastIndexOf('/');
     if (li2 > li1) { li1 = li2; }
     var AppPath = process.argv[1].substring(0,li1);
-    var p1 = path.resolve(AppPath + rootSymLinkNativeScript);
-    var p2 = path.resolve(AppPath + rootSymLinkClient);
+    var p1 = path.resolve(AppPath + "/" + nativescriptClientPath);
+    var p2 = path.resolve(AppPath + "/" + angularSeedPath);
+    if (debugging) {
+        console.log("Path: ", p1, p2);
+    }
     fs.symlinkSync(p2,p1,'junction');
 }
 
@@ -174,7 +198,10 @@ function createRootSymLink() {
  * Create Symlink
  */
 function createSymLink() {
-    fs.symlinkSync(path.resolve(clientSrc + '/'),path.resolve(nativescriptClientSrc),'junction');
+    if (debugging) {
+        console.log("Attempting to Symlink", angularSeedPath, nativescriptClientPath);
+    }
+    fs.symlinkSync(path.resolve(angularSeedPath),path.resolve(nativescriptClientPath),'junction');
 }
 
 /**
@@ -239,14 +266,8 @@ function fixNativeScriptPackage() {
         };
     }
 
-    // Setup the TNS Version
-    // var version = packageJSON.dependencies['tns-core-modules'];
-    // if (version[0] === '^') { version = version.substring(1); }
-    // if (version.indexOf(' ') !== -1) {
-    //     version = version.substring(0, version.indexOf(' '));
-    // }
-    packageJSON.nativescript['tns-ios'] = { version: "2.0.0" };//version};
-    packageJSON.nativescript['tns-android'] = {version: "2.0.0" };//version};
+    packageJSON.nativescript['tns-ios'] = { version: "2.0.0" };
+    packageJSON.nativescript['tns-android'] = {version: "2.0.0" };
 
     // Copy over all the Peer Dependencies
     for (var key in AngularJSON.peerDependencies) {
@@ -287,8 +308,8 @@ function fixAngularPackage() {
         packageJSON.scripts = {};
     }
 
-    packageJSON.scripts["start.ios"] = "cd nativescript && tns emulate ios";
-    packageJSON.scripts["start.android"] = "cd nativescript && tns emulate android";
+    packageJSON.scripts["start.ios"] = "cd nativescript && tns emulate ios && cd ..";
+    packageJSON.scripts["start.android"] = "cd nativescript && tns emulate android && cd ..";
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJSON, null, 4), 'utf8');
 }
@@ -320,7 +341,7 @@ function fixMainFile (component) {
  */
 function displayFinalHelp()
 {
-    console.log("-------------- Welcome to the Magical World of NativeScript -------------------");
+    console.log("-------------- Welcome to the Magical World of NativeScript -----------------------------");
     console.log("To finish, follow this guide https://github.com/NathanWalker/nativescript-ng2-magic#usage");
     console.log("After you have completed the steps in the usage guide, you can then:");
     console.log("");
@@ -329,6 +350,6 @@ function displayFinalHelp()
     console.log("");
     console.log("Run your app in an Android emulator with:");
     console.log("  npm run start.android");
-    console.log("-------------------------------------------------------------------------------");
+    console.log("-----------------------------------------------------------------------------------------");
     console.log("");
 }
