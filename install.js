@@ -1,5 +1,5 @@
 // -----------------------------------------------------------
-// version 1.06
+// version 1.07
 // -----------------------------------------------------------
 "use strict";
 
@@ -166,14 +166,14 @@ function processBootStrap(file) {
 function AttemptRootSymlink() {
 
     if (process.platform === 'win32') {
-        var curPath = path.resolve("./");
+        var curPath = resolve("./");
         if (debugging) {
             console.log("RootSymlink Base path is", curPath);
         }
         cp.execSync("powershell -Command \"Start-Process 'node' -ArgumentList '"+curPath+"/install.js symlink' -verb runas\"");
     } else if (process.platform === 'darwin') {
         var sudoFn = require('sudo-fn');
-        sudoFn({module: 'fs', function: 'symlinkSync', params: [path.resolve(angularSeedPath),path.resolve(nativescriptClientPath)],type: 'node-callback'},function () {
+        sudoFn({module: 'fs', function: 'symlinkSync', params: [resolve(angularSeedPath),resolve(nativescriptClientPath)],type: 'node-callback'},function () {
             console.log("Symlink Created");
         });
     }
@@ -186,8 +186,8 @@ function createRootSymLink() {
     var li1 = process.argv[1].lastIndexOf('\\'), li2 = process.argv[1].lastIndexOf('/');
     if (li2 > li1) { li1 = li2; }
     var AppPath = process.argv[1].substring(0,li1);
-    var p1 = path.resolve(AppPath + "/" + nativescriptClientPath);
-    var p2 = path.resolve(AppPath + "/" + angularSeedPath);
+    var p1 = resolve(AppPath + "/" + nativescriptClientPath);
+    var p2 = resolve(AppPath + "/" + angularSeedPath);
     if (debugging) {
         console.log("Path: ", p1, p2);
     }
@@ -201,7 +201,7 @@ function createSymLink() {
     if (debugging) {
         console.log("Attempting to Symlink", angularSeedPath, nativescriptClientPath);
     }
-    fs.symlinkSync(path.resolve(angularSeedPath),path.resolve(nativescriptClientPath),'junction');
+    fs.symlinkSync(resolve(angularSeedPath),resolve(nativescriptClientPath),'junction');
 }
 
 /**
@@ -352,4 +352,34 @@ function displayFinalHelp()
     console.log("  npm run start.android");
     console.log("-----------------------------------------------------------------------------------------");
     console.log("");
+}
+
+function splitPath(v) {
+    var x;
+    if (v.indexOf('/') !== -1) {
+        x = v.split('/');
+    } else {
+        x = v.split("\\");
+    }
+    return x;
+}
+
+function resolve(v) {
+    var cwdPath = splitPath(process.argv[1]);
+    // Kill the Script name
+    cwdPath.length = cwdPath.length - 1;
+
+    var resolvePath = splitPath(v);
+    if (v[0] === '/' || v[0] === "\\") { cwdPath = []; }
+    for (var i=0;i<resolvePath.length;i++) {
+        if (resolvePath[i] === '.') { continue; }
+        if (resolvePath[i] === '..') { cwdPath.pop(); }
+        else { cwdPath.push(resolvePath[i]); }
+    }
+    if (process.platform === 'win32') {
+        return cwdPath.join("\\");
+    } else {
+        return cwdPath.join('/');
+    }
+
 }
