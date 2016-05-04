@@ -379,7 +379,7 @@ function resolve(v) {
     if (process.platform === 'win32') {
         return cwdPath.join("\\");
     } else {
-        return cwdPath.join('/');
+        return "/"+cwdPath.join('/');
     }
 
 }
