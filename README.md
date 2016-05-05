@@ -8,9 +8,6 @@ Magically drop a [NativeScript](https://www.nativescript.org/) app into your exi
 
 *You will be adding NativeScript views, but you already knew that.*
 
-* [Install](#install)
-* [Usage](#usage)
-* [Example](#example)
 * [Supported seeds](#supported-seeds)
 
 ## Install
@@ -30,10 +27,7 @@ npm i nativescript-ng2-magic
 A sample root component, **app.component.ts**:
 
 ```
-import {Component, MagicService} from 'nativescript-ng2-magic';
-// can be any directory **relative** to your web src root
-// in this repo, the web src root is `src/`
-MagicService.NATIVESCRIPT_VIEW_PATH = './client/nativescript'; 
+import {Component} from 'nativescript-ng2-magic';
 
 @Component({
   selector: 'app',
@@ -49,9 +43,6 @@ If your app is using the router, you will want to use the `MagicService.ROUTER_D
 ```
 import {Component, MagicService} from 'nativescript-ng2-magic';
 import {RouteConfig} from 'angular2/router';
-// can be any directory **relative** to your web src root
-// in this repo, the web src root is `src/`
-MagicService.NATIVESCRIPT_VIEW_PATH = './client/nativescript'; 
 
 import {HomeComponent} from './components/home';
 import {AboutComponent} from './components/about';
@@ -70,7 +61,7 @@ export class AppComponent {}
 
 ### Run for first time!
 
-You will need to have fully completed steps 1-4 above.
+You will need to have fully completed steps 1 and 2 above.
 
 Run your app in the iOS Simulator with:
 
@@ -96,15 +87,13 @@ Based on our example above, assume `./client/components/app.component.html` look
 </main>
 ```
 
-You would then create a new file in `./client/nativescript/client/components/app.component.html` like this:
+You would then create a new file in `./client/components/app.component.tns.html` like this:
 
 ```
 <StackLayout>
   <Label text="This is my root component"></Label>
 </StackLayout>
 ```
-
-Notice how the `templateUrl` is expanded to match underneath `./client/nativescript` which is the path we chose to configure `MagicService.NATIVESCRIPT_VIEW_PATH`. 
 
 You can [learn more about NativeScript view options here](https://docs.nativescript.org/ui/ui-views).
 
@@ -114,6 +103,7 @@ You can [learn more here](http://angularjs.blogspot.com/2016/03/code-reuse-in-an
 
 ## Supported Seeds
 
+* [angular2-seed](https://github.com/angular/angular2-seed)
 * [angular2-webpack-seed](https://github.com/NathanWalker/angular2-webpack-seed)
 
 ### Why different Component?
@@ -125,14 +115,9 @@ Feel free to [check it out here](https://github.com/NathanWalker/nativescript-ng
 
 You can see more elaborate use cases of this magic with [angular2-seed-advanced](https://github.com/NathanWalker/angular2-seed-advanced).
 
-### Why absolute paths?
-
-Relative paths won't work because the view path translation expands your component's templateUrl underneath the `NATIVESCRIPT_VIEW_PATH` you configure. It needs a full path to your components template to achieve it's magic.
-
 ## Requirements
 
 * [Install NativeScript](http://docs.nativescript.org/start/getting-started#install-nativescript-and-configure-your-environment)
-* Requires usage of `templateUrl` for your `Component`'s using absolute paths. 
 
 # License
 
