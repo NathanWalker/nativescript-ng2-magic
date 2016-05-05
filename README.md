@@ -22,10 +22,8 @@ npm i nativescript-ng2-magic
 ## Usage
 
 1. Use `Component` from `nativescript-ng2-magic` instead of `angular2/core`. [Why?](#why-different-component)
-2. Use `templateUrl` with your components and use absolute paths. [Why?](#why-absolute-paths)
-3. Point `MagicService.NATIVESCRIPT_VIEW_PATH` at a specific directory for your NativeScript views.
-4. Create NativeScript views for each of your component's templates in that ^ directory. [How?](#how-to-create-nativescript-views)
-5. [Run your truly *native* mobile app with NativeScript!](#run-for-first-time)
+2. Create NativeScript views ending with `.tns.html` for each of your component's templates. [How?](#how-to-create-nativescript-views)
+3. [Run your truly *native* mobile app with NativeScript!](#run-for-first-time)
 
 ## Example
 
