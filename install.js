@@ -1,5 +1,5 @@
 // -----------------------------------------------------------
-// version 1.07
+// version 1.09
 // -----------------------------------------------------------
 "use strict";
 
@@ -49,11 +49,10 @@ if (!hasNativeScript && !isRanFromNativeScript) {
     console.log("Installing support files");
     if (process.platform === 'darwin') {
         try {
-            cp.execSync('npm install sudo-fn', {cwd: '../..'});
             cp.execSync('npm install image-to-ascii-cli', {cwd: '../..'});
         }
         catch (Err) {
-            console.log("Sudo install Error", Err);
+            console.log("Install Error", Err);
         }
     }
 
@@ -91,13 +90,26 @@ if (!hasNativeScript && !isRanFromNativeScript) {
     // This does not look good on windows; windows ansi support in node sucks...  So we aren't going to do this in windows
     if (process.platform === "darwin") {
         // image to ascii uses GM which may not be installed, so if it isn't installed; don't print the error message
-        var ascii = cp.execSync('image-to-ascii -i https://cdn.filestackcontent.com/XXMT4f8S8OGngNsJj0pr', {cwd: '../image-to-ascii-cli/bin/'}).toString();
-        if (ascii.length > 30) {
+		try {
+          var ascii = cp.execSync('image-to-ascii -i https://cdn.filestackcontent.com/XXMT4f8S8OGngNsJj0pr', {cwd: '../image-to-ascii-cli/bin/'}).toString();
+          if (ascii.length > 30) {
             console.log(ascii);
-        }
+          }
+	    } 
+		catch (err) {
+			// Do Nothing; if the site can't be resolved; we don't want to fail the script
+		}
     }
 
     displayFinalHelp();
+
+    if (!fs.existsSync(nativescriptClientPath)) {
+        console.log("We were unable to create a symlink  - from -");
+        console.log("  ", resolve(angularSeedPath), "    - to - ");
+		console.log("  ", resolve(nativescriptClientPath));
+        console.log("If you don't create this symlink, you will have to manually copy the code each time you change it.");
+    }
+
 
 }
 
@@ -171,11 +183,9 @@ function AttemptRootSymlink() {
             console.log("RootSymlink Base path is", curPath);
         }
         cp.execSync("powershell -Command \"Start-Process 'node' -ArgumentList '"+curPath+"/install.js symlink' -verb runas\"");
-    } else if (process.platform === 'darwin') {
-        var sudoFn = require('sudo-fn');
-        sudoFn({module: 'fs', function: 'symlinkSync', params: [resolve(angularSeedPath),resolve(nativescriptClientPath)],type: 'node-callback'},function () {
-            console.log("Symlink Created");
-        });
+    } else {        
+		console.log("To automatically create a SymLink between your web app and NativeScript, we need root for a second.");
+		cp.execSync("sudo "+process.argv[0] + " " + process.argv[1] +" symlink");
     }
 }
 
@@ -370,16 +380,25 @@ function resolve(v) {
     cwdPath.length = cwdPath.length - 1;
 
     var resolvePath = splitPath(v);
+
+    // Eliminate a trailing slash/backslash
+    if (cwdPath[cwdPath.length-1] === "") { cwdPath.pop(); }
+
     if (v[0] === '/' || v[0] === "\\") { cwdPath = []; }
     for (var i=0;i<resolvePath.length;i++) {
-        if (resolvePath[i] === '.') { continue; }
+        if (resolvePath[i] === '.' || resolvePath[i] === "") { continue; }
         if (resolvePath[i] === '..') { cwdPath.pop(); }
         else { cwdPath.push(resolvePath[i]); }
     }
     if (process.platform === 'win32') {
-        return cwdPath.join("\\");
+        var winResult = cwdPath.join("\\");
+        if (winResult[winResult.length-1] === "\\") { winResult = winResult.substring(0, winResult.length - 1); }
+        return winResult;
     } else {
-        return "/"+cwdPath.join('/');
+		var result = cwdPath.join('/');
+		if (result[0] !== '/') { result = '/' + result; }
+		if (result[result.length-1] === '/') { result = result.substring(0, result.length - 1); }
+        return result;
     }
 
 }
