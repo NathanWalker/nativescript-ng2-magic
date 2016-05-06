@@ -1,5 +1,5 @@
 // angular
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 
 // app
 import {MagicService} from '../services/magic.service';

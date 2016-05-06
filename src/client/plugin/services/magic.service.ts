@@ -1,4 +1,4 @@
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 
 declare var NSObject, NSString, android, java;
 

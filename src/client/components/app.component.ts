@@ -1,6 +1,5 @@
 import {Component} from '../plugin/decorators/magic.component';
 import {MagicService} from '../plugin/services/magic.service';
-MagicService.NATIVESCRIPT_VIEW_PATH = './client/nativescript';
 
 // UNCOMMENT BELOW to test NativeScript Mock Env
 // let win: any = window || {};
