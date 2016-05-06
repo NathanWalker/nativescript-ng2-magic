@@ -18,7 +18,7 @@ npm i nativescript-ng2-magic
 
 ## Usage
 
-1. Use `Component` from `nativescript-ng2-magic` instead of `angular2/core`. [Why?](#why-different-component)
+1. Use `Component` from `nativescript-ng2-magic` instead of `@angular/core`. [Why?](#why-different-component)
 2. Create NativeScript views ending with `.tns.html` for each of your component's templates. [How?](#how-to-create-nativescript-views)
 3. [Run your truly *native* mobile app with NativeScript!](#run-for-first-time)
 
@@ -42,7 +42,7 @@ If your app is using the router, you will want to use the `MagicService.ROUTER_D
 
 ```
 import {Component, MagicService} from 'nativescript-ng2-magic';
-import {RouteConfig} from 'angular2/router';
+import {RouteConfig} from '@angular/router-deprecated';
 
 import {HomeComponent} from './components/home';
 import {AboutComponent} from './components/about';
@@ -108,7 +108,7 @@ You can [learn more here](http://angularjs.blogspot.com/2016/03/code-reuse-in-an
 
 ### Why different Component?
 
-`Component` from `nativescript-ng2-magic` is identical to `Component` from `angular2/core`, except it automatically uses NativeScript views when your app runs in a NativeScript mobile app.
+`Component` from `nativescript-ng2-magic` is identical to `Component` from `@angular/core`, except it automatically uses NativeScript views when your app runs in a NativeScript mobile app.
 
 The library provides a custom `Decorator` under the hood.
 Feel free to [check it out here](https://github.com/NathanWalker/nativescript-ng2-magic/blob/master/src/client/plugin/decorators/magic.component.ts) and it uses a [utility here](https://github.com/NathanWalker/nativescript-ng2-magic/blob/master/src/client/plugin/decorators/utils.ts).
