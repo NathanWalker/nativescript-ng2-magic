@@ -120,6 +120,7 @@ if (isRanFromNativeScript) {
         fixNativeScriptPackage();
         fixAngularPackage();
         fixMainFile(figureOutRootComponent());
+        fixGitIgnore('nativescript/app/' + seeds[seedId]);
         console.log("Completed Install");
     } else {
         console.log("We have already been installed in the NativeScript app as a plugin.");
@@ -348,6 +349,27 @@ function fixMainFile (component) {
       'import {AppComponent} from "' + component + '";\n' +
       '\n' +
       'nativeScriptBootstrap(AppComponent, [NS_ROUTER_PROVIDERS], { startPageActionBarHidden: false });';
+
+
+    fs.writeFileSync(mainFile, fix, 'utf8');
+  }
+}
+
+/**
+ * Fix .gitignore
+ * @param path
+ */
+function fixGitIgnore(ignorePattern) {
+  var fileString = '', ignoreFile = '../../../.gitignore';
+  if (fs.existsSync(ignoreFile)) {
+    fileString = fs.readFileSync(ignoreFile).toString();
+  } 
+
+  if (fileString.indexOf(ignorePattern) === -1) {
+    // has not been previously modified
+    var fix = fileString +
+      '\n' +
+      ignorePattern;
 
 
     fs.writeFileSync(mainPath, fix, 'utf8');
