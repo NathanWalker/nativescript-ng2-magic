@@ -25,7 +25,6 @@ for (var i=0;i<seeds.length;i++) {
 }
 angularSeedPath += seeds[seedId] + "/";
 var nativescriptClientPath = '../../nativescript/app/' + seeds[seedId] + "/";
-var nativescriptSymLinkPath = 'nativescript/app/' + seeds[seedId];
 
 if (debugging) {
     console.log("Path is:", angularSeedPath, nativescriptClientPath);
@@ -120,8 +119,16 @@ if (isRanFromNativeScript) {
         fixTsConfig();
         fixNativeScriptPackage();
         fixAngularPackage();
-        fixMainFile(figureOutRootComponent());
-        fixGitIgnore(nativescriptSymLinkPath);
+        fixMainFile( figureOutRootComponent());
+
+        // when being run from inside {N} app, the directory is different
+        var srcRoot = '../../../src/';
+        for (var i=0;i<seeds.length;i++) {
+            if (fs.existsSync(srcRoot + seeds[i])) {
+                seedId = i; break;
+            }
+        }
+        fixGitIgnore('nativescript/app/' + seeds[seedId]);
         console.log("Completed Install");
     } else {
         console.log("We have already been installed in the NativeScript app as a plugin.");
@@ -144,7 +151,10 @@ function figureOutRootComponent() {
         }
     }
     // Return a default component, if we can't find one...
-    return './client/components/app.component';
+    return {
+      name: 'AppComponent',
+      path: './client/components/app.component'
+    };
 }
 
 /**
@@ -167,6 +177,13 @@ function processBootStrap(file) {
     if (debugging) {
         console.log("Searching for", exp);
     }
+
+    var result = function (r) {
+      return {
+        name: r[1],
+        path: r[r.length - 1]
+      };
+    };
     //noinspection JSPotentiallyInvalidConstructorUsage
     var r = RegExp(exp, 'i').exec(data);
     if (r === null || r.length <= 1) {
@@ -184,15 +201,15 @@ function processBootStrap(file) {
         }
         r = RegExp(exp, 'i').exec(data);
         if (r !== null && r.length > 1) {
-          return r[r.length-1]; // last one is the path importing from
+          return result(r);
         }
       } else {
         // angular cli
-        return r[r.length-1]; // last one is the path importing from
+        return result(r);
       }     
       return null;
     }
-    return r[r.length-1];
+    return result(r);
 }
 
 /**
@@ -354,7 +371,7 @@ function fixAngularPackage() {
  * Fix the Main NativeScript File
  * @param component
  */
-function fixMainFile (component) {
+function fixMainFile(component) {
   var mainTS = '', mainFile = '../../app/main.ts';
   if (fs.existsSync(mainFile)) {
     mainTS = fs.readFileSync(mainFile).toString();
@@ -369,9 +386,9 @@ function fixMainFile (component) {
       'MagicService.ROUTER_DIRECTIVES = NS_ROUTER_DIRECTIVES;\n' +
       '\n' +
       '// import your root component here\n' +
-      'import {AppComponent} from "' + component + '";\n' +
+      'import {' + component.name + '} from "' + component.path + '";\n' +
       '\n' +
-      'nativeScriptBootstrap(AppComponent, [NS_ROUTER_PROVIDERS], { startPageActionBarHidden: false });';
+      'nativeScriptBootstrap(' + component.name + ', [NS_ROUTER_PROVIDERS], { startPageActionBarHidden: false });';
 
 
     fs.writeFileSync(mainFile, fix, 'utf8');
