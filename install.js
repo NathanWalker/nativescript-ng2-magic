@@ -3,7 +3,7 @@
 // -----------------------------------------------------------
 "use strict";
 
-var debugging = false;
+var debugging = true;
 
 var fs = require('fs');
 var cp = require('child_process');
@@ -162,13 +162,24 @@ function processBootStrap(file) {
     if (odx2 < odx1 && odx2 !== -1 || odx1 === -1) { odx1 = odx2; }
     if (odx1 === -1) { return null; }
     var componentRef = data.substring(idx, odx1);
-    var exp = "import\\s+\\{"+componentRef+"\\}\\s+from\\s+[\'|\"](\\S+)[\'|\"][;?]";
+    var exp = "import\\s+\\{"+componentRef;
     if (debugging) {
         console.log("Searching for", exp);
     }
     //noinspection JSPotentiallyInvalidConstructorUsage
     var r = RegExp(exp, 'i').exec(data);
-    if (r === null || r.length <= 1) { return null; }
+    if (r === null || r.length <= 1) {
+      // check if using current style guide with spaces
+      exp = "import\\s+\\{\\s+" + componentRef;
+      if (debugging) {
+        console.log("Searching for", exp);
+      }
+      r = RegExp(exp, 'i').exec(data);
+      if (r !== null && r.length > 0) {
+        return r[1];
+      }        
+      return null;
+    }
     return r[1];
 }
 
