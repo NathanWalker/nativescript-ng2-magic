@@ -8,7 +8,7 @@ Magically drop a [NativeScript](https://www.nativescript.org/) app into your exi
 
 *You will be adding NativeScript views, but you already knew that.*
 
-* [Supported seeds](#supported-seeds)
+* [Supported projects that can use magic](#supported-projects)
 
 ## Install
 
@@ -38,7 +38,32 @@ export class AppComponent {}
 
 #### What if using the router?
 
-If your app is using the router, you will want to use the `MagicService.ROUTER_DIRECTIVES` from `nativescript-ng2-magic`. Here's an example of the root component above using routing:
+* If using the *new* `@angular/router`:
+
+You will want to use `MagicService.ROUTER_DIRECTIVES` from `nativescript-ng2-magic`. Here's an example of the root component:
+
+```
+import {Component, MagicService} from 'nativescript-ng2-magic';
+import {Routes} from '@angular/router';
+
+import {HomeComponent} from './components/home';
+import {AboutComponent} from './components/about';
+
+@Component({
+  selector: 'app',
+  templateUrl: './client/components/app.component.html',
+  directives: [MagicService.ROUTER_DIRECTIVES] // <-- Notice this!
+})
+@Routes([
+  { path: '/home',       component: HomeComponent },
+  { path: '/about',      component: AboutComponent }
+])
+export class AppComponent {}
+```
+
+* If using `@angular/router-deprecated`:
+
+You will want to use `MagicService.DEP_ROUTER_DIRECTIVES` from `nativescript-ng2-magic`. Here's an example of the root component:
 
 ```
 import {Component, MagicService} from 'nativescript-ng2-magic';
@@ -50,7 +75,7 @@ import {AboutComponent} from './components/about';
 @Component({
   selector: 'app',
   templateUrl: './client/components/app.component.html',
-  directives: [MagicService.DEP_ROUTER_DIRECTIVES] 
+  directives: [MagicService.DEP_ROUTER_DIRECTIVES]  // <-- Notice this!
 })
 @RouteConfig([
   { path: '/home',       component: HomeComponent,        name: 'Home', useAsDefault: true },
@@ -101,8 +126,9 @@ You can also install helpful view snippets for [VS Code here](https://marketplac
 
 You can [learn more here](http://angularjs.blogspot.com/2016/03/code-reuse-in-angular-2-native-mobile.html?m=1) about how this setup works and why.
 
-## Supported Seeds
+## Supported Projects
 
+* [angular-cli](https://cli.angular.io/)
 * [angular2-seed](https://github.com/angular/angular2-seed)
 * [angular2-webpack-seed](https://github.com/NathanWalker/angular2-webpack-seed)
 

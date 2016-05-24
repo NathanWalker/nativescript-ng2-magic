@@ -122,7 +122,7 @@ if (isRanFromNativeScript) {
         fixMainFile(figureOutRootComponent());
         console.log("Completed Install");
     } else {
-        console.log("We have already been installed in the NS as a plugin");
+        console.log("We have already been installed in the NativeScript app as a plugin.");
         return 0;
     }
 }
@@ -134,7 +134,7 @@ return 0;
  * @returns {string}
  */
 function figureOutRootComponent() {
-    var rootComponents = ['../../../src/bootstrap.ts', '../../../src/app.ts', '../../../boot.ts'];
+    var rootComponents = ['../../../src/bootstrap.ts', '../../../src/app.ts', '../../../boot.ts', '../../../src/main.ts'];
     for (var i=0;i<rootComponents.length; i++) {
         if (fs.existsSync(rootComponents[i])) {
             var result = processBootStrap(rootComponents[i]);
@@ -257,43 +257,43 @@ function fixNativeScriptPackage() {
     packageJSON.name = "NativeScriptApp";
     packageJSON.version = "0.0.0";
   
-    var AngularJSON = {};
+    // var AngularJSON = {};
     if (fs.existsSync(packageFile)) {
         packageJSON = require(packageFile);
     } else {
         console.log("This should not happen, your are missing your package.json file!");
         return;
     }
-    if (fs.existsSync('../angular2/package.json')) {
-        AngularJSON = require('../angular2/package.json');
-    } else {
-        // Copied from the Angular2.0.0-beta-16 package.json, this is a fall back
-        AngularJSON.peerDependencies = {
-            "es6-shim": "^0.35.0",
-            "reflect-metadata": "0.1.2",
-            "rxjs": "5.0.0-beta.6",
-            "zone.js": "^0.6.12"
-        };
-    }
+    // if (fs.existsSync('../angular2/package.json')) {
+    //     AngularJSON = require('../angular2/package.json');
+    // } else {
+    //     // Copied from the Angular2.0.0-beta-16 package.json, this is a fall back
+    //     AngularJSON.peerDependencies = {
+    //         "es6-shim": "^0.35.0",
+    //         "reflect-metadata": "0.1.2",
+    //         "rxjs": "5.0.0-beta.6",
+    //         "zone.js": "^0.6.12"
+    //     };
+    // }
 
     packageJSON.nativescript['tns-ios'] = { version: "2.0.0" };
     packageJSON.nativescript['tns-android'] = {version: "2.0.0" };
 
     // Copy over all the Peer Dependencies
-    for (var key in AngularJSON.peerDependencies) {
-        if (AngularJSON.peerDependencies.hasOwnProperty(key)) {
-            packageJSON.dependencies[key] = AngularJSON.peerDependencies[key];
-        }
-    }
+    // for (var key in AngularJSON.peerDependencies) {
+    //     if (AngularJSON.peerDependencies.hasOwnProperty(key)) {
+    //         packageJSON.dependencies[key] = AngularJSON.peerDependencies[key];
+    //     }
+    // }
 
 
     // TODO: Can we get these from somewhere rather than hardcoding them, maybe need to pull/download the package.json from the default template?
     if (!packageJSON.devDependencies) {
         packageJSON.devDependencies = {};
     }
-    packageJSON.devDependencies["babel-traverse"] = "6.7.6";
-    packageJSON.devDependencies["babel-types"] = "6.7.7";
-    packageJSON.devDependencies.babylon = "6.7.0";
+    packageJSON.devDependencies["babel-traverse"] = "6.9.0";
+    packageJSON.devDependencies["babel-types"] = "6.9.0";
+    packageJSON.devDependencies.babylon = "6.8.0";
     packageJSON.devDependencies.filewalker = "0.1.2";
     packageJSON.devDependencies.lazy = "1.0.11";
     packageJSON.devDependencies["nativescript-dev-typescript"] = "^0.3.2";
@@ -331,21 +331,27 @@ function fixAngularPackage() {
  * @param component
  */
 function fixMainFile (component) {
-    var mainPath = '../../app/main.ts';
+  var mainTS = '', mainFile = '../../app/main.ts';
+  if (fs.existsSync(mainFile)) {
+    mainTS = fs.readFileSync(mainFile).toString();
+  } 
 
+  if (mainTS.indexOf('MagicService') === -1) {
+    // has not been previously modified
     var fix = '// this import should be first in order to load some required settings (like globals and reflect-metadata)\n' +
-        'import {nativeScriptBootstrap} from "nativescript-angular/application";\n' +
-        'import {NS_ROUTER_PROVIDERS, NS_ROUTER_DIRECTIVES} from "nativescript-angular/router";\n' +
-        'import {MagicService} from "nativescript-ng2-magic";\n' +
-        'MagicService.ROUTER_DIRECTIVES = NS_ROUTER_DIRECTIVES;\n' +
-        '\n' +
-        '// import your root component here\n' +
-        'import {AppComponent} from "' + component + '";\n' +
-        '\n' +
-        'nativeScriptBootstrap(AppComponent, [NS_ROUTER_PROVIDERS], { startPageActionBarHidden: false });';
+      'import {nativeScriptBootstrap} from "nativescript-angular/application";\n' +
+      'import {NS_ROUTER_PROVIDERS, NS_ROUTER_DIRECTIVES} from "nativescript-angular/router";\n' +
+      'import {MagicService} from "nativescript-ng2-magic";\n' +
+      'MagicService.ROUTER_DIRECTIVES = NS_ROUTER_DIRECTIVES;\n' +
+      '\n' +
+      '// import your root component here\n' +
+      'import {AppComponent} from "' + component + '";\n' +
+      '\n' +
+      'nativeScriptBootstrap(AppComponent, [NS_ROUTER_PROVIDERS], { startPageActionBarHidden: false });';
 
 
     fs.writeFileSync(mainPath, fix, 'utf8');
+  }
 }
 
 /**
@@ -357,11 +363,13 @@ function displayFinalHelp()
     console.log("To finish, follow this guide https://github.com/NathanWalker/nativescript-ng2-magic#usage");
     console.log("After you have completed the steps in the usage guide, you can then:");
     console.log("");
-    console.log("Run your app in the iOS Simulator with:");
+    console.log("Run your app in the iOS Simulator with these options:");
     console.log("  npm run start.ios");
+    console.log("  npm run start.livesync.ios");
     console.log("");
-    console.log("Run your app in an Android emulator with:");
+    console.log("Run your app in an Android emulator with these options:");
     console.log("  npm run start.android");
+    console.log("  npm run start.livesync.android");
     console.log("-----------------------------------------------------------------------------------------");
     console.log("");
 }
