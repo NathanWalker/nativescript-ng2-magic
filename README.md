@@ -50,7 +50,7 @@ import {AboutComponent} from './components/about';
 @Component({
   selector: 'app',
   templateUrl: './client/components/app.component.html',
-  directives: [MagicService.ROUTER_DIRECTIVES]
+  directives: [MagicService.DEP_ROUTER_DIRECTIVES] 
 })
 @RouteConfig([
   { path: '/home',       component: HomeComponent,        name: 'Home', useAsDefault: true },

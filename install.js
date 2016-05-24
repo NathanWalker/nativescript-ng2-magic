@@ -318,8 +318,10 @@ function fixAngularPackage() {
         packageJSON.scripts = {};
     }
 
-    packageJSON.scripts["start.ios"] = "cd nativescript && tns emulate ios && cd ..";
-    packageJSON.scripts["start.android"] = "cd nativescript && tns emulate android && cd ..";
+    packageJSON.scripts["start.ios"] = "cd nativescript && tns emulate ios";
+    packageJSON.scripts["start.livesync.ios"] = "cd nativescript && tns livesync ios --emulator --watch";
+    packageJSON.scripts["start.android"] = "cd nativescript && tns emulate android";
+    packageJSON.scripts["start.livesync.android"] = "cd nativescript && tns livesync android --emulator --watch";
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJSON, null, 4), 'utf8');
 }
