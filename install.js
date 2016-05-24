@@ -372,7 +372,7 @@ function fixGitIgnore(ignorePattern) {
       ignorePattern;
 
 
-    fs.writeFileSync(mainPath, fix, 'utf8');
+    fs.writeFileSync(ignoreFile, fix, 'utf8');
   }
 }
 
