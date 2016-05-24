@@ -3,7 +3,7 @@
 // -----------------------------------------------------------
 "use strict";
 
-var debugging = true;
+var debugging = false;
 
 var fs = require('fs');
 var cp = require('child_process');
@@ -25,6 +25,7 @@ for (var i=0;i<seeds.length;i++) {
 }
 angularSeedPath += seeds[seedId] + "/";
 var nativescriptClientPath = '../../nativescript/app/' + seeds[seedId] + "/";
+var nativescriptSymLinkPath = 'nativescript/app/' + seeds[seedId];
 
 if (debugging) {
     console.log("Path is:", angularSeedPath, nativescriptClientPath);
@@ -120,7 +121,7 @@ if (isRanFromNativeScript) {
         fixNativeScriptPackage();
         fixAngularPackage();
         fixMainFile(figureOutRootComponent());
-        fixGitIgnore('nativescript/app/' + seeds[seedId]);
+        fixGitIgnore(nativescriptSymLinkPath);
         console.log("Completed Install");
     } else {
         console.log("We have already been installed in the NativeScript app as a plugin.");
@@ -162,7 +163,7 @@ function processBootStrap(file) {
     if (odx2 < odx1 && odx2 !== -1 || odx1 === -1) { odx1 = odx2; }
     if (odx1 === -1) { return null; }
     var componentRef = data.substring(idx, odx1);
-    var exp = "import\\s+\\{"+componentRef;
+    var exp = "import\\s+\\{("+componentRef+")\\}\\s+from+\\s+[\'|\"](\\S+)[\'|\"][;?]";
     if (debugging) {
         console.log("Searching for", exp);
     }
@@ -170,17 +171,28 @@ function processBootStrap(file) {
     var r = RegExp(exp, 'i').exec(data);
     if (r === null || r.length <= 1) {
       // check if using current style guide with spaces
-      exp = "import\\s+\\{\\s+" + componentRef;
+      exp = "import\\s+\\{\\s+("+componentRef+")\\,\\s+([A-Z]{0,300})\\w+\\s+\\}\\s+from+\\s+[\'|\"](\\S+)[\'|\"][;?]";
       if (debugging) {
         console.log("Searching for", exp);
       }
       r = RegExp(exp, 'i').exec(data);
-      if (r !== null && r.length > 0) {
-        return r[1];
-      }        
+      if (r === null || r.length <= 1) {
+        // try just spaces with no angular cli style (, environment) etc.
+        exp = "import\\s+\\{\\s+(" + componentRef + ")\\s+\\}\\s+from+\\s+[\'|\"](\\S+)[\'|\"][;?]";
+        if (debugging) {
+          console.log("Searching for", exp);
+        }
+        r = RegExp(exp, 'i').exec(data);
+        if (r !== null && r.length > 1) {
+          return r[r.length-1]; // last one is the path importing from
+        }
+      } else {
+        // angular cli
+        return r[r.length-1]; // last one is the path importing from
+      }     
       return null;
     }
-    return r[1];
+    return r[r.length-1];
 }
 
 /**
