@@ -9,6 +9,7 @@ Magically drop a [NativeScript](https://www.nativescript.org/) app into your exi
 *You will be adding NativeScript views, but you already knew that.*
 
 * [Supported projects that can use magic](#supported-projects)
+* [Watch video on how to integrate with Angular CLI](http://www.nativescriptsnacks.com/videos/2016/05/12/magic-scaffolding.html)
 
 ## Install
 
