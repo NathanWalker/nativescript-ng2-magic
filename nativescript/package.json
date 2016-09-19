@@ -2,20 +2,28 @@
 	"nativescript": {
 		"id": "org.nativescript.nativescript",
 		"tns-ios": {
-			"version": "2.0.0"
+			"version": "2.2.1"
 		}
 	},
 	"dependencies": {
-		"angular2": "2.0.0-beta.14",
+		"@angular/core": "2.0.0",
+    "@angular/common": "2.0.0",
+    "@angular/compiler": "2.0.0",
+    "@angular/forms": "2.0.0",
+    "@angular/http": "2.0.0",
+    "@angular/platform-browser": "2.0.0",
+    "@angular/platform-browser-dynamic": "2.0.0",
+    "@angular/platform-server": "2.0.0",
+    "@angular/router": "3.0.0",
     "es6-shim": "^0.35.0",
-		"nativescript-angular": "0.0.41",
-    "nativescript-ng2-magic": "1.1.0",
-    "reflect-metadata": "0.1.2",
-		"rxjs": "5.0.0-beta.2",
-		"tns-core-modules": "^2.0.0 || 2.0.0-angular-4",
-    "zone.js": "^0.6.6"
+		"nativescript-angular": "next",
+    "nativescript-ng2-magic": "1.7.1",
+    "reflect-metadata": "^0.1.8",
+		"rxjs": "5.0.0-beta.12",
+		"tns-core-modules": "^2.2.1"
 	},
 	"devDependencies": {
+    "zone.js": "^0.6.21",
 		"nativescript-dev-typescript": "^0.3.2",
 		"typescript": "^1.8.10"
 	}

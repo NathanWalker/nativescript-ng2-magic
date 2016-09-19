@@ -68,6 +68,10 @@ if (!hasNativeScript && !isRanFromNativeScript) {
         console.log("Removing sample component");
         fs.unlinkSync('../../nativescript/app/app.component.ts');
     }
+  if (fs.existsSync('../../nativescript/app/app.component.html')) {
+        console.log("Removing sample component html");
+        fs.unlinkSync('../../nativescript/app/app.component.html');
+    }
 
 
 
@@ -143,7 +147,7 @@ return 0;
  * @returns {string}
  */
 function figureOutRootComponent() {
-    var rootComponents = ['../../../src/bootstrap.ts', '../../../src/app.ts', '../../../boot.ts', '../../../src/main.ts'];
+    var rootComponents = ['../../../src/app/app.module.ts', '../../../src/app.ts', '../../../boot.ts', '../../../src/main.ts'];
     for (var i=0;i<rootComponents.length; i++) {
         if (fs.existsSync(rootComponents[i])) {
             var result = processBootStrap(rootComponents[i]);
@@ -317,8 +321,8 @@ function fixNativeScriptPackage() {
     //     };
     // }
 
-    packageJSON.nativescript['tns-ios'] = { version: "2.0.0" };
-    packageJSON.nativescript['tns-android'] = {version: "2.0.0" };
+    packageJSON.nativescript['tns-ios'] = { version: "2.2.1" };
+    packageJSON.nativescript['tns-android'] = {version: "2.2.0" };
 
     // Copy over all the Peer Dependencies
     // for (var key in AngularJSON.peerDependencies) {
@@ -333,11 +337,11 @@ function fixNativeScriptPackage() {
         packageJSON.devDependencies = {};
     }
     packageJSON.devDependencies["babel-traverse"] = "6.9.0";
-    packageJSON.devDependencies["babel-types"] = "6.9.0";
-    packageJSON.devDependencies.babylon = "6.8.0";
+    packageJSON.devDependencies["babel-types"] = "6.10.0";
+    packageJSON.devDependencies.babylon = "6.8.1";
     packageJSON.devDependencies.filewalker = "0.1.2";
     packageJSON.devDependencies.lazy = "1.0.11";
-    packageJSON.devDependencies["nativescript-dev-typescript"] = "^0.3.2";
+    // packageJSON.devDependencies["nativescript-dev-typescript"] = "^0.3.2";
     packageJSON.devDependencies.typescript = "^1.8.10";
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJSON, null, 4), 'utf8');
@@ -380,15 +384,17 @@ function fixMainFile(component) {
   if (mainTS.indexOf('MagicService') === -1) {
     // has not been previously modified
     var fix = '// this import should be first in order to load some required settings (like globals and reflect-metadata)\n' +
-      'import {nativeScriptBootstrap} from "nativescript-angular/application";\n' +
-      'import {NS_ROUTER_PROVIDERS, NS_ROUTER_DIRECTIVES} from "nativescript-angular/router";\n' +
-      'import {MagicService} from "nativescript-ng2-magic";\n' +
-      'MagicService.ROUTER_DIRECTIVES = NS_ROUTER_DIRECTIVES;\n' +
+      'import { platformNativeScriptDynamic, NativeScriptModule } from "nativescript-angular/platform";\n' +
+      'import { NgModule } from "@angular/core";\n' +
+      'import { AppComponent } from "./app/app.component";\n' +
       '\n' +
-      '// import your root component here\n' +
-      'import {' + component.name + '} from "' + component.path + '";\n' +
-      '\n' +
-      'nativeScriptBootstrap(' + component.name + ', [NS_ROUTER_PROVIDERS], { startPageActionBarHidden: false });';
+      '@NgModule({\n' +
+      '  declarations: [AppComponent],\n' +
+      '  bootstrap: [AppComponent],\n' +
+      '   imports: [NativeScriptModule],\n' +
+      '})\n' +
+      'class AppComponentModule {}\n\n' +
+      'platformNativeScriptDynamic().bootstrapModule(AppComponentModule);';
 
 
     fs.writeFileSync(mainFile, fix, 'utf8');

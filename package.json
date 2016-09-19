@@ -2,11 +2,11 @@
   "name": "nativescript-ng2-magic",
   "nativescript": {
     "platforms": {
-      "ios": "2.0.0",
-      "android":  "2.0.0"
+      "ios": "2.2.1",
+      "android":  "2.2.0"
     }
   },
-  "version": "1.5.7",
+  "version": "1.7.2",
   "description": "Magically integrate your Angular2 web app with NativeScript.",
   "main": "nativescript-ng2-magic.js",
   "typings": "./nativescript-ng2-magic.d.ts",
@@ -20,12 +20,6 @@
     "postinstall": "node install.js"
   },
   "peerDependencies": {
-    "@angular/common": "^2.0.0-rc.1",
-		"@angular/compiler": "^2.0.0-rc.1",
-		"@angular/core": "^2.0.0-rc.1",
-		"@angular/router": "^2.0.0-rc.1",
-    "@angular/router-deprecated": "^2.0.0-rc.1",
-		"@angular/platform-browser": "^2.0.0-rc.1",
-		"@angular/platform-browser-dynamic": "^2.0.0-rc.1"
+    "@angular/core": "^2.0.0"
   }
 }
