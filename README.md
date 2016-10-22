@@ -20,7 +20,7 @@ npm i nativescript-ng2-magic
 ## Usage
 
 1. Use `Component` from `nativescript-ng2-magic` instead of `@angular/core`. [Why?](#why-different-component)
-2. Create NativeScript views ending with `.tns.html` for each of your component's templates. [How?](#how-to-create-nativescript-views)
+2. Create NativeScript views ending with `.tns.html` (and/or styles ending with `.tns.css`) for each of your component's. [How?](#how-to-create-nativescript-views)
 3. [Run your truly *native* mobile app with NativeScript!](#run-for-first-time)
 
 ## Example
@@ -34,54 +34,6 @@ import {Component} from 'nativescript-ng2-magic';
   selector: 'app',
   templateUrl: './client/components/app.component.html'
 })
-export class AppComponent {}
-```
-
-#### What if using the router?
-
-* If using the *new* `@angular/router`:
-
-You will want to use `MagicService.ROUTER_DIRECTIVES` from `nativescript-ng2-magic`. Here's an example of the root component:
-
-```
-import {Component, MagicService} from 'nativescript-ng2-magic';
-import {Routes} from '@angular/router';
-
-import {HomeComponent} from './components/home';
-import {AboutComponent} from './components/about';
-
-@Component({
-  selector: 'app',
-  templateUrl: './client/components/app.component.html',
-  directives: [MagicService.ROUTER_DIRECTIVES] // <-- Notice this!
-})
-@Routes([
-  { path: '/home',       component: HomeComponent },
-  { path: '/about',      component: AboutComponent }
-])
-export class AppComponent {}
-```
-
-* If using `@angular/router-deprecated`:
-
-You will want to use `MagicService.DEP_ROUTER_DIRECTIVES` from `nativescript-ng2-magic`. Here's an example of the root component:
-
-```
-import {Component, MagicService} from 'nativescript-ng2-magic';
-import {RouteConfig} from '@angular/router-deprecated';
-
-import {HomeComponent} from './components/home';
-import {AboutComponent} from './components/about';
-
-@Component({
-  selector: 'app',
-  templateUrl: './client/components/app.component.html',
-  directives: [MagicService.DEP_ROUTER_DIRECTIVES]  // <-- Notice this!
-})
-@RouteConfig([
-  { path: '/home',       component: HomeComponent,        name: 'Home', useAsDefault: true },
-  { path: '/about',      component: AboutComponent,       name: 'About' }
-])
 export class AppComponent {}
 ```
 

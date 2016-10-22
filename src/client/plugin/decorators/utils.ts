@@ -15,6 +15,11 @@ export class MagicDecoratorUtils {
       metadata.templateUrl = MagicService.TEMPLATE_URL(metadata.templateUrl);
     }
 
+    if (metadata.styleUrls) {
+      // correct style for platform target
+      metadata.styleUrls = MagicService.STYLE_URLS(metadata.styleUrls);
+    }
+
     return metadata;
   }
 

@@ -121,6 +121,7 @@ if (isRanFromNativeScript) {
     if (!fs.existsSync('installed.ns') ) {
         fs.writeFileSync('installed.ns', 'installed');
         fixTsConfig();
+        fixRefFile();
         fixNativeScriptPackage();
         fixAngularPackage();
         fixMainFile( figureOutRootComponent());
@@ -267,19 +268,39 @@ function fixTsConfig() {
     if (fs.existsSync(tsFile)) {
         tsConfig = require(tsFile);
     }
-    if (!tsConfig.compilerOptions) {
+    if (!tsConfig.compilerOptions || !tsConfig.compilerOptions.typeRoots) {
         tsConfig.compilerOptions = {
-            module: 'commonjs',
-            target: 'es5',
-            sourceMap:true,
-            experimentalDecorators: true,
-            emitDecoratorMetadata: true
+          target: "es5",
+          module: "commonjs",
+          declaration: false,
+          removeComments: true,
+          noLib: false,
+          emitDecoratorMetadata: true,
+          experimentalDecorators: true,
+          lib: [
+            "dom"
+          ],
+          sourceMap: true,
+          pretty: true,
+          allowUnreachableCode: false,
+          allowUnusedLabels: false,
+          noImplicitAny: false,
+          noImplicitReturns: true,
+          noImplicitUseStrict: false,
+          noFallthroughCasesInSwitch: true,
+          typeRoots: [
+              "node_modules/@types",
+              "node_modules"
+          ],
+          types: [
+              "jasmine"
+          ]
         };
     }
 
     // See: https://github.com/NativeScript/nativescript-angular/issues/205
-    tsConfig.compilerOptions.noEmitHelpers = false;
-    tsConfig.compilerOptions.noEmitOnError = false;
+    // tsConfig.compilerOptions.noEmitHelpers = false;
+    // tsConfig.compilerOptions.noEmitOnError = false;
 
     if (!tsConfig.exclude) {
         tsConfig.exclude = [];
@@ -292,6 +313,25 @@ function fixTsConfig() {
     }
 
     fs.writeFileSync(tsFile, JSON.stringify(tsConfig, null, 4), 'utf8');
+}
+
+/**
+ * This fixes the references file to work with TS 2.0 in the nativescript folder
+ */
+function fixRefFile() {
+    var existingRef='', refFile = '../../references.d.ts';
+    if (fs.existsSync(refFile)) {
+        existingRef = fs.readFileSync(refFile).toString();
+    }
+
+  if (existingRef.indexOf('typescript/lib/lib.d.ts') === -1) {
+    // has not been previously modified
+    var fix = '/// <reference path="./node_modules/tns-core-modules/tns-core-modules.d.ts" />\n' +
+      '/// <reference path="./node_modules/typescript/lib/lib.d.ts" />\n';
+
+
+    fs.writeFileSync(refFile, fix, 'utf8');
+  }
 }
 
 /**
@@ -321,8 +361,8 @@ function fixNativeScriptPackage() {
     //     };
     // }
 
-    packageJSON.nativescript['tns-ios'] = { version: "2.2.1" };
-    packageJSON.nativescript['tns-android'] = {version: "2.2.0" };
+    packageJSON.nativescript['tns-ios'] = { version: "2.3.0" };
+    packageJSON.nativescript['tns-android'] = {version: "2.3.0" };
 
     // Copy over all the Peer Dependencies
     // for (var key in AngularJSON.peerDependencies) {
@@ -336,13 +376,14 @@ function fixNativeScriptPackage() {
     if (!packageJSON.devDependencies) {
         packageJSON.devDependencies = {};
     }
-    packageJSON.devDependencies["babel-traverse"] = "6.9.0";
-    packageJSON.devDependencies["babel-types"] = "6.10.0";
-    packageJSON.devDependencies.babylon = "6.8.1";
+    packageJSON.devDependencies["@types/jasmine"] = "^2.5.35";
+    packageJSON.devDependencies["babel-traverse"] = "6.12.0";
+    packageJSON.devDependencies["babel-types"] = "6.11.1";
+    packageJSON.devDependencies.babylon = "6.8.4";
     packageJSON.devDependencies.filewalker = "0.1.2";
     packageJSON.devDependencies.lazy = "1.0.11";
     // packageJSON.devDependencies["nativescript-dev-typescript"] = "^0.3.2";
-    packageJSON.devDependencies.typescript = "^1.8.10";
+    packageJSON.devDependencies.typescript = "^2.0.2";
 
     fs.writeFileSync(packageFile, JSON.stringify(packageJSON, null, 4), 'utf8');
 }
