@@ -14,7 +14,7 @@ Magically drop a [NativeScript](https://www.nativescript.org/) app into your exi
 ## Install
 
 ```
-npm i nativescript-ng2-magic
+npm i nativescript-ng2-magic --save
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ import {Component} from 'nativescript-ng2-magic';
 
 @Component({
   selector: 'app',
-  templateUrl: './client/components/app.component.html'
+  templateUrl: './app.component.html'
 })
 export class AppComponent {}
 ```
@@ -57,7 +57,7 @@ Welcome to the wonderfully magical world of NativeScript!
 
 ## How to create NativeScript views
 
-Based on our example above, assume `./client/components/app.component.html` looks like this:
+Based on our example above, assume `app.component.html` looks like this:
 
 ```
 <main>
@@ -65,7 +65,7 @@ Based on our example above, assume `./client/components/app.component.html` look
 </main>
 ```
 
-You would then create a new file in `./client/components/app.component.tns.html` like this:
+You would then create a new file in `app.component.tns.html` like this:
 
 ```
 <StackLayout>
