@@ -94,6 +94,24 @@ Feel free to [check it out here](https://github.com/NathanWalker/nativescript-ng
 
 You can see more elaborate use cases of this magic with [angular2-seed-advanced](https://github.com/NathanWalker/angular2-seed-advanced).
 
+### Special Note About AoT
+
+Currently you cannot use custom component decorators with AoT compilation. This may change in the future but for now you can use this pattern for when you need to create AoT builds for the web:
+
+```
+import { Component } from '@angular/core';
+
+// just comment this out and use Component from 'angular/core'
+// import { Component } from 'nativescript-ng2-magic';
+
+@Component({
+  // etc.
+```
+
+After doing the above, running AoT build will succeed. :)
+
+The Component from `nativescript-ng2-magic` does the auto `templateUrl` switching to use {N} views when running in the {N} app therefore you don't need it when creating AoT builds for the web. However just note that when going back to run your {N} app, you should comment back in the `Component` from `nativescript-ng2-magic`. Again this temporary inconvenience may be unnecessary in the future.
+
 ## Requirements
 
 * [Install NativeScript](http://docs.nativescript.org/start/getting-started#install-nativescript-and-configure-your-environment)
