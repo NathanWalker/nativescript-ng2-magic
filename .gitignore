@@ -53,6 +53,7 @@ __build__/**
 # IDE #
 .idea/
 *.swp
+.vscode/angulardoc.json
 
 *.js
 *.js.map

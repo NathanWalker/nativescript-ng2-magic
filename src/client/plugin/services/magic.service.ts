@@ -2,7 +2,7 @@ declare var NSObject, NSString, android, java;
 
 export class MagicService {
 
-  public static TEMPLATE_URL(path: string, platformSpecific?: boolean = false): string {
+  public static TEMPLATE_URL(path: string, platformSpecific?: boolean): string {
     if (MagicService.IS_NATIVESCRIPT()) {
       path = path.replace("./", "./app/");
       var paths = path.split('.');
@@ -14,7 +14,7 @@ export class MagicService {
     }
   }
 
-  public static STYLE_URLS(paths: string[], platformSpecific?: boolean = false): string[] {
+  public static STYLE_URLS(paths: string[], platformSpecific?: boolean): string[] {
     if (MagicService.IS_NATIVESCRIPT()) {
       return paths.map((path) => {
         path = path.replace("./", "./app/");

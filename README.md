@@ -73,6 +73,24 @@ You would then create a new file in `app.component.tns.html` like this:
 </StackLayout>
 ```
 
+You can **also** use platform specific views if desired with the `platformSpecific` Component metadata:
+
+```
+import {Component} from 'nativescript-ng2-magic';
+
+@Component({
+  selector: 'app',
+  templateUrl: './app.component.html',
+  platformSpecific: true
+})
+export class AppComponent {}
+```
+
+Then you could create separate views for iOS and Android:
+
+* `app.component.ios.html`
+* `app.component.android.html`
+
 You can [learn more about NativeScript view options here](https://docs.nativescript.org/ui/ui-views).
 
 You can also install helpful view snippets for [VS Code here](https://marketplace.visualstudio.com/items?itemName=wwwalkerrun.nativescript-ng2-snippets) or [Atom Editor here](https://atom.io/packages/nativescript-ng2-atom-snippets).
