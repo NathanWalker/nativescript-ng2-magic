@@ -2,25 +2,25 @@ declare var NSObject, NSString, android, java;
 
 export class MagicService {
 
-  public static TEMPLATE_URL(path: string): string {
+  public static TEMPLATE_URL(path: string, platformSpecific?: boolean = false): string {
     if (MagicService.IS_NATIVESCRIPT()) {
       path = path.replace("./", "./app/");
       var paths = path.split('.');
       paths.splice(-1);
-      var platform = MagicService.IS_ANDROID() ? 'android' : 'ios';
+      var platform = platformSpecific ? (MagicService.IS_ANDROID() ? 'android' : 'ios') : 'tns';
       return `${paths.join('.')}.${platform}.html`;
     } else {
       return path;
     }
   }
 
-  public static STYLE_URLS(paths: string[]): string[] {
+  public static STYLE_URLS(paths: string[], platformSpecific?: boolean = false): string[] {
     if (MagicService.IS_NATIVESCRIPT()) {
       return paths.map((path) => {
         path = path.replace("./", "./app/");
         let parts = path.split('.');
         parts.splice(-1);
-        var platform = MagicService.IS_IOS() ? 'ios' : 'android';
+        var platform = platformSpecific ? (MagicService.IS_ANDROID() ? 'android' : 'ios') : 'tns';
         return `${parts.join('.')}.${platform}.css`;
       });
     } else {
