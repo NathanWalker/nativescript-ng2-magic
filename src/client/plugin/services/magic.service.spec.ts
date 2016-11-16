@@ -15,7 +15,7 @@ win.NSObject = {};
 win.NSString = "test";
 
 describe('MagicService', () => {
-  
+
   beforeEach(() => {
     spyOn(console, 'error');
   });
@@ -23,7 +23,10 @@ describe('MagicService', () => {
   it('should provide resilient magic', () => {
     expect(MagicService.NATIVESCRIPT_VIEW_PATH).toBeUndefined();
     expect(MagicService.IS_NATIVESCRIPT()).toBe(true);
-    expect(MagicService.TEMPLATE_URL('./components/test.html')).toBe('./components/test.html');
+    expect(MagicService.IS_IOS()).toBe(true);
+    expect(MagicService.IS_ANDROID()).toBe(false);
+    expect(MagicService.TEMPLATE_URL('./components/test.html')).toBe('./components/test.ios.html');
+    expect(MagicService.STYLE_URLS('./components/test.css')).toBe('./components/test.ios.css');
     expect(console.error).toHaveBeenCalledWith(`You need to set 'MagicService.NATIVESCRIPT_VIEW_PATH' to the path of your NativeScript views.`);
     expect(MagicService.TEMPLATE_URL)
   });

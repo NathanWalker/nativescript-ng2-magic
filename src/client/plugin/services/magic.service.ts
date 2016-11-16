@@ -7,7 +7,8 @@ export class MagicService {
       path = path.replace("./", "./app/");
       var paths = path.split('.');
       paths.splice(-1);
-      return paths.join('.') + ".tns.html";
+      var platform = MagicService.IS_ANDROID() ? 'android' : 'ios';
+      return `${paths.join('.')}.${platform}.html`;
     } else {
       return path;
     }
@@ -19,7 +20,8 @@ export class MagicService {
         path = path.replace("./", "./app/");
         let parts = path.split('.');
         parts.splice(-1);
-        return `${parts.join('.')}.tns.css`;
+        var platform = MagicService.IS_IOS() ? 'ios' : 'android';
+        return `${parts.join('.')}.${platform}.css`;
       });
     } else {
       return paths;
@@ -27,6 +29,14 @@ export class MagicService {
   }
 
   public static IS_NATIVESCRIPT() {
-    return ((typeof NSObject !== 'undefined' && typeof NSString !== 'undefined') || (typeof android !== 'undefined' && typeof java !== 'undefined'));
+    return (MagicService.IS_IOS() || MagicService.IS_ANDROID());
+  }
+
+  public static IS_IOS() {
+    return (typeof NSObject !== 'undefined' && typeof NSString !== 'undefined');
+  }
+
+  public static IS_ANDROID() {
+    return (typeof android !== 'undefined' && typeof java !== 'undefined');
   }
 }
