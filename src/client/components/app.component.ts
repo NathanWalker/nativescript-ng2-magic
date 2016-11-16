@@ -13,7 +13,8 @@ import {MagicService} from '../plugin/services/magic.service';
 @Component({
   selector: 'app',
   styleUrls: ['./client/components/app.component.css'],
-  templateUrl: './client/components/app.component.html'
+  templateUrl: './client/components/app.component.html',
+  platformSpecific: true
 })
 export class AppComponent {
   statement: string = 'Creating magic with NativeScript + Angular2';

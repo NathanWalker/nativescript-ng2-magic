@@ -12,7 +12,7 @@ export class MagicDecoratorUtils {
 
     if (metadata.templateUrl) {
       // correct view for platform target
-      metadata.templateUrl = MagicService.TEMPLATE_URL(metadata.templateUrl);
+      metadata.templateUrl = MagicService.TEMPLATE_URL(metadata.templateUrl, !!metadata.platformSpecific);
     }
 
     if (metadata.styleUrls) {
