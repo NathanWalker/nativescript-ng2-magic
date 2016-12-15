@@ -134,6 +134,8 @@ if (isRanFromNativeScript) {
             }
         }
         fixGitIgnore('nativescript/app/' + seeds[seedId]);
+        fixGitIgnore('nativescript/app/node_modules');
+        fixGitIgnore('nativescript/app/platforms');
         console.log("Completed Install");
     } else {
         console.log("We have already been installed in the NativeScript app as a plugin.");
